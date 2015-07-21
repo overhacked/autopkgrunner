@@ -31,6 +31,18 @@ OSStatus run()
     NSError* error;
     BOOL runError = NO;
     NSArray* recipes = [APRrecipes scheduledRecipes];
+
+    // Check if there are any .munki recipes
+    if ([[recipes copy] indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        NSDictionary* recipe = (NSDictionary*)obj;
+        return ([recipe[kRecipe] rangeOfString:@".munki"].location != NSNotFound);
+    }] != NSNotFound) {
+        // Add MakeCatalogs.munki to the recipe list
+        NSMutableDictionary* recipeDict = [[NSMutableDictionary alloc] init];
+        [recipeDict setObject:@"MakeCatalogs.munki" forKey:kRecipe];
+        recipes = [recipes arrayByAddingObject:recipeDict];
+    }
+
     for (NSDictionary* recipe in recipes) {
         NSMutableString* cmd = [NSMutableString stringWithFormat:@"autopkg run %@", recipe[kRecipe]];
         for (NSString* key in recipe[kRecipeKeys]) {

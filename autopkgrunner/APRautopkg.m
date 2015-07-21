@@ -50,9 +50,6 @@ NSString* autopkg = @"/usr/local/bin/autopkg";
     [arguments addObjectsFromArray:args];
     [arguments addObject:recipe];
 
-    if ([recipe rangeOfString:@".munki"].location != NSNotFound) {
-        [arguments addObject:@"MakeCatalogs.munki"];
-    }
     return [[self class] runAutoPkgwithArgs:arguments output:nil error:error];
 }
 
